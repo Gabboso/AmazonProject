@@ -1,5 +1,178 @@
-const products = [
-  {
+import {formatCurrency} from "../scripts/utils/money.js";
+
+export function getProduct(productId) {
+  let matchingProduct;
+
+  products.forEach((product) => {
+    if (product.id === productId) {
+      matchingProduct = product;
+    } 
+  })
+
+  return matchingProduct; 
+}
+
+
+export class Product {
+  id;
+  image;
+  name;
+  rating;
+  priceCents;
+  keywords;
+
+  constructor(productDetails) {
+      this.id = productDetails.id;
+      this.image = productDetails.image;
+      this.name = productDetails.name;
+      this.rating = productDetails.rating;
+      this.priceCents = productDetails.priceCents;
+      this.keywords = productDetails.keywords;
+  }
+  getStarsUrl() {
+    return `images/ratings/rating-${this.rating.stars * 10}.png`;
+  }
+  getPrice() {
+  return `$${formatCurrency(this.priceCents)}`;
+  }
+  extraInfoHTML() {
+    return '';
+  }
+}
+
+export class Clothing extends Product { // Clothing will inherit all the properties and methods of Product Class
+
+  sizeChartLink;
+
+  constructor (productDetails) {
+    super(productDetails);
+    this.sizeChartLink = productDetails.sizeChartLink;
+  }
+
+  extraInfoHTML() { // we override this parent's method.
+    // super.extraInfoHTML(); -> access to parents methods
+    return `
+      <a href = '${this.sizeChartLink}' target='_blank'>
+      Size chart
+      </a>
+    `
+  }
+  
+}
+
+export class Appliance extends Product {
+  instructionsLink;
+  warrantyLink;
+
+  constructor (productDetails) {
+    super(productDetails);
+    this.instructionsLink = productDetails.instructionsLink;
+    this.warrantyLink = productDetails.warrantyLink;
+  }
+
+  extraInfoHTML() { // we override this parent's method.
+  // super.extraInfoHTML(); -> access to parents methods
+  return `
+    <a href = '${this.instructionsLink}' target='_blank'>
+      Instructions
+    </a>
+    <a href = '${this.warrantyLink}' target='_blank'>
+      Warranty
+    </a>
+  `
+  }
+}
+
+/*
+const date  = new Date ();
+console.log(date);
+console.log(date.toLocaleTimeString());
+*/
+
+/*
+console.log(this);
+
+const object2 = {
+  a: 2,
+  b: this // -> object2 has not been created yet ==> object2 is undefined 
+}
+*/
+
+/*
+function logThis() {
+  console.log(this);
+}
+logThis();
+logThis.call(2);
+
+const object3 = {
+  method: () => {
+    console.log(this);
+  }
+}
+object3.method()
+*/
+
+
+
+
+export let products = [];
+
+export function loadProductsFetch() {
+  const promise = fetch('https://supersimplebackend.dev/products').then((response) => {
+    return response.json(); // response.json is a promise ---> return Promise ---> will end when the promise ends;
+  }).then((productsData) => {
+    products = productsData.map((productDetails) => { 
+      if (productDetails.type === 'clothing') {
+        return new Clothing(productDetails);
+      } else if (productDetails.type === 'appliance') {
+        return new Appliance(productDetails);
+      }
+        return new Product(productDetails);
+    });;
+    console.log('load products');
+
+  // handle errors in promises  
+  }).catch((error) => { // if the fetch request has an error the function inside the brackets of catch gets executed; catch gets a parameter named error which contains informations about the error if we need it;
+    console.log('unexpected error. Please try again later.');
+  }) // GET request by default. In order to get the response from the backend fetch() uses a promise instead of callBack; the response get saved inside a parameter (CALLED response);
+  
+  return promise; // the function returns a promise
+}
+
+/*
+loadProductsFetch().then(() => {
+  console.log('next step');
+});
+*/
+
+export function loadProducts(fun) {
+  const xhr = new XMLHttpRequest();
+  xhr.addEventListener('load', () => { // this uses a callBack
+    products = JSON.parse(xhr.response).map((productDetails) => { 
+      if (productDetails.type === 'clothing') {
+        return new Clothing(productDetails);
+      } else if (productDetails.type === 'appliance') {
+        return new Appliance(productDetails);
+      }
+        return new Product(productDetails);
+    });;
+    console.log('load products');
+    
+    fun();
+  });
+  // handle errors in callback functions
+  xhr.addEventListener('error', (error) => {
+    console.log('unexpected error. Please try again later.');
+    console.log(error);
+  });
+  xhr.open('GET', 'https://supersimplebackend.dev/products')
+  xhr.send();
+}
+
+/*
+export const products = [
+    {
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
     image: "images/products/athletic-cotton-socks-6-pairs.jpg",
     name: "Black and Gray Athletic Cotton Socks - 6 Pairs",
@@ -58,7 +231,10 @@ const products = [
       "toaster",
       "kitchen",
       "appliances"
-    ]
+    ],
+    type: 'appliance',
+    instructionsLink: '../images/appliance-instructions.png',
+    warrantyLink: '../images/appliance-warranty.png',
   },
   {
     id: "3ebe75dc-64d2-4137-8860-1f5a963e534b",
@@ -243,7 +419,10 @@ const products = [
       "water boiler",
       "appliances",
       "kitchen"
-    ]
+    ],
+    type: 'appliance',
+    instructionsLink: '../images/appliance-instructions.png',
+    warrantyLink: '../images/appliance-warranty.png',
   },
   {
     id: "6b07d4e7-f540-454e-8a1e-363f25dbae7d",
@@ -608,7 +787,10 @@ const products = [
       "food blenders",
       "kitchen",
       "appliances"
-    ]
+    ],
+    type: 'appliance',
+    instructionsLink: '../images/appliance-instructions.png',
+    warrantyLink: '../images/appliance-warranty.png',
   },
   {
     id: "36c64692-677f-4f58-b5ec-0dc2cf109e27",
@@ -657,4 +839,18 @@ const products = [
       "mens"
     ]
   }
-]; // this is called a data structure cuz it structures or organizes the datas (it's usually a combination of objects and arrays)
+].map((productDetails) => { // .map() => creates a new array and whatever we return from the function is what is going inside it at evey iteration;
+  if (productDetails.type === 'clothing') {
+    return new Clothing(productDetails);
+  } else if (productDetails.type === 'appliance') {
+    return new Appliance(productDetails);
+  }
+
+  return new Product(productDetails);
+}); // this is called a data structure cuz it structures or organizes the datas (it's usually a combination of objects and arrays)
+
+*/
+
+
+
+

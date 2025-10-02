@@ -1,0 +1,78 @@
+document.querySelector('.js-order-summary')
+  .addEventListener('click', (event) => {
+    const button = event.target;
+
+    if (button.matches('.js-delete-link')) {
+      const productId = button.dataset.productId;
+      removeFromCart(productId);
+      updateCartQuantity(location);
+      button.closest('.cart-item-container').remove();
+    }
+
+    if (button.matches('.js-update-quantity-link')) {
+      button.closest('.cart-item-container').classList.add('is-editing-quantity');
+    }
+
+    if (button.matches('.save-quantity-link')) {
+      button.closest('.cart-item-container').classList.remove('is-editing-quantity');
+    }
+  });
+
+
+
+
+è piu efficiente. riguarda il checkout, in particolare la gestione dei bottoni.
+
+
+
+
+
+
+
+
+
+
+----------------- altro esempio sempre sull'ottimizzazione degli event listeners
+
+
+
+  // entry point, ad esempio checkout.js
+import { renderOrderSummary } from './checkout/orderSummary.js';
+import { removeFromCart } from '../../data/cart.js';
+
+const container = document.querySelector('.js-order-summary');
+
+container.addEventListener('click', (event) => {
+  // delete link
+  if (event.target.matches('.js-delete-link')) {
+    const productId = event.target.dataset.productId;
+    removeFromCart(productId);
+    renderOrderSummary();
+  }
+
+  // update quantity link
+  if (event.target.matches('.js-update-quantity-link')) {
+    const productId = event.target.dataset.productId;
+    document.querySelector(`.js-cart-item-container-${productId}`)
+            .classList.add('is-editing-quantity');
+  }
+
+  // save quantity
+  if (event.target.matches('.save-quantity-link')) {
+    const productId = event.target.dataset.productId;
+    // chiama funzione update
+    update(event.target);
+    renderOrderSummary();
+  }
+
+  // delivery option
+  if (event.target.closest('.js-delivery-option')) {
+    const element = event.target.closest('.js-delivery-option');
+    const { productId, deliveryOptionId } = element.dataset;
+    updateDeliveryOptions(productId, deliveryOptionId);
+    renderOrderSummary();
+  }
+});
+
+-----------
+                                                            
