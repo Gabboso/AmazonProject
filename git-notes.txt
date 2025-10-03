@@ -1,0 +1,65 @@
+keywords:
+	-commit;
+	-commit history;
+	-git repository = folder that is being tracked by git;
+	-mergin => when you merge two branches togheter, the result will go onto the branch that you are currently working on ( = where 'head->' is pointing to); 
+		If there's a mergin conflic, we will get the error and vs code will show us where the conflict and in which files. when we resolve the merge conflict, we just need to stage 		and commit (the commit + message will represent de resulst version that merges the two branches)
+
+- vsCode supports git integration:
+  - Staging area => changes here will go in the next version;
+  - Working area => changes here will not gi inte the next version;
+
+commit history = version history;
+Usefult git commands:
+- git init => initialize an empty repository in the current folder;
+- git status => it tells us what changes have been made since the previous version;
+- git add => allow us to pick which changes we want in our next version (files or folders (it'll include all the files inside the folder)); [. --> add everything that is contained in the current folder];
+- git commit  => allow us to create a new version; 
+  Flags:
+    -m -> message attached to the commit;
+    --amend -> attach the changes to the previous version (commit); So you DON'T create a new version;
+    --graph -> show us the log but in a visually better way showing explicitly the different branches; --> master tag = points the latest commitment in the branch -> [if we need master 	       version can directly write master insted of the commit hash]
+
+- git config --global user.name "Nuovo Nome" --> configure/view/override name;
+- git config --global user.email "nuovo.email@example.com" configure/view/override email;
+- git log  => Show us the version history + ho committed each version listed there;
+  -The 'head' word beside a version is telling us which version we are currently viewing (e.g. head->master);
+  Flags :
+  --all -> show all the version, even the ones that are next to our current version;
+
+
+- git reset => Unstages the changes; works like add, semantically speaking;
+|- git checkout -- [file(s)] => reset changes of file(s) (they must be in the Working area);
+|- git checkout [commitHash] => bring us to a previous version of the code; we can find the commit hash in the log;
+|- git checkout [commitHash] [file(s)] => we can override the file(s) in our current version with the ones of other versions
+- git remote add [origin (nickname to the remote repository. conventionally we call it 'origin'). alias of the url at the right] [url of our remote repository / OR SSH SO THAT WE DON'T HAVE TO INSERT THE PASSWORD EVERY TIME];     :
+	-you can link it to more remote repositories;
+- git remote => lists all the remote repositories that are currently linked to our local repository;
+	flags:
+	-v => verbose -> git remote -v show from where we can fetch and where we can push;
+- git remote remove [url nickname (e.g 'origin')] => remove the link with a remote repository;
+- git config --global credential.username "[GitHub username]";
+- git push [remote repository (e.g 'push')] [which branch of commits that we are going to push] => upload commits (it DOESN'T push changes though) to the remote repository;
+- git push [e.g. origin] [e.g. master] --set-upstream => we setted a shortcut -> next time we'll only need to type git push;
+	flags:
+	-f to force the push. it's need when we need to overwrite GitHub (it's usually bad practice doing that);
+- git clone [remote repository url] [new folder where we want to clone the repository in] => copies all the cod and initialize git in the local folder. (it works without typing git init
+	before becasue it'll init it automatically)
+- git fetch => update the git log with possible changes in the remote directory (changes that were pushed by Others);
+- git pull [e.g. origin] [e.g. master (which branch we want to pull] => we are gonna get any update from the master branch in origin and we are gonna sync them back to our local master. we 	have to do it only after being sure that we are in the same branch that we are tryin to update; 
+branch;
+- git pull [e.g. origin] [e.g. master] --set-upstream => we setted a shortcut -> next time we'll only need to type git pull;
+-git branch [branch name] => creates a branch  
+	before: (head->master), then: (git brach; git checkout) = (head->feature1(brancName))
+	flag:
+	-D [branchName] => delete a branch;
+-git merge [branch to merge together with the branch we are currently on (head->)] -m "message" => the result is gonna be saved in a commit (with a message -m);
+
+Miscellanous :
+	-shortcuts:
+		alias (in order to create shortcut for commands that we use very frequently): git config --global alias.[shortcut] "[fullCommandThatWeWant]";
+	
+	-ignore files: create a '.gitignore' file and write inside the names of all the files we want to ignore
+	-remove git from our folder: Remove-Item -Recurse -Force .git
+
+		
